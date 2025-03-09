@@ -64,7 +64,7 @@ export default function SignIn() {
       </TouchableOpacity>
       
       <TouchableOpacity 
-        onPress={() => router.push('/(auth)/register')}
+        onPress={() => router.push('/(auth)/sign-up')}
         style={styles.link}
       >
         <Text style={styles.linkText}>
@@ -119,4 +119,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textDecorationLine: 'underline',
   },
-}); 
+});
