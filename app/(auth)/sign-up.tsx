@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Modal, ScrollView } from 'react-native';
 import { Link, router } from 'expo-router';
 import { X } from 'lucide-react-native';
 import { useAuth } from '@/store/auth';
 import { supabase } from '@/lib/supabase';
+import { Picker } from '@react-native-picker/picker';
+import { moroccanCities } from '@/constants/moroccanCities';
 
 export default function SignUp() {
   const [firstName, setFirstName] = useState('');
@@ -12,6 +14,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [postalCode, setPostalCode] = useState('');
+  const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
@@ -32,6 +35,7 @@ export default function SignUp() {
     }
     
     if (!postalCode.trim()) return 'Postal code is required';
+    if (!city) return 'City is required';
     return null;
   };
 
@@ -55,6 +59,7 @@ export default function SignUp() {
             last_name: lastName,
             phone,
             postal_code: postalCode,
+            city,
           },
         },
       });
@@ -81,7 +86,7 @@ export default function SignUp() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -159,8 +164,23 @@ export default function SignUp() {
           keyboardType="number-pad"
         />
 
+        <View style={styles.pickerContainer}>
+          <Text style={styles.pickerLabel}>City</Text>
+          <Picker
+            selectedValue={city}
+            onValueChange={(itemValue) => setCity(itemValue)}
+            style={styles.picker}
+            mode="dropdown"
+          >
+            <Picker.Item label="Select your city" value="" />
+            {moroccanCities.map((cityName) => (
+              <Picker.Item key={cityName} label={cityName} value={cityName} />
+            ))}
+          </Picker>
+        </View>
+
         <Text style={styles.helperText}>
-          Your phone and zip code help us match and connect you with the right Taskers.
+          Your phone, city, and zip code help us match and connect you with the right Taskers.
         </Text>
 
         <Pressable
@@ -211,7 +231,7 @@ export default function SignUp() {
           </View>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -291,6 +311,21 @@ const styles = StyleSheet.create({
   },
   phoneNumber: {
     flex: 1,
+    marginBottom: 0,
+  },
+  pickerContainer: {
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  pickerLabel: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 4,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
     marginBottom: 0,
   },
   helperText: {
@@ -374,4 +409,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
   },
-}); 
+});
